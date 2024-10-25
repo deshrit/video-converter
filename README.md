@@ -15,3 +15,5 @@ sudo apt install build-essential cmake pkg-config libavformat-dev libavcodec-dev
 ```
 
 ## Concept for video processing
+
+![image](https://github.com/user-attachments/assets/fd19fb9d-2814-4bda-86c1-59a00bc26f5d)
