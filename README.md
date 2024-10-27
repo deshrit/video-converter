@@ -21,4 +21,4 @@ This should generate the output file as `sample_converted.mp4` with a image file
 
 ## Concept for video processing
 
-![image](https://github.com/user-attachments/assets/fd19fb9d-2814-4bda-86c1-59a00bc26f5d)
+![image](https://github.com/user-attachments/assets/36654faa-5163-4271-a1e8-19909d573467)
