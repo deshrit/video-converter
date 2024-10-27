@@ -7,6 +7,7 @@
 extern "C"
 {
 #include <libavcodec/avcodec.h>
+#include <libavutil/avutil.h>
 }
 
 const char *get_file_path_from_argv(const int argc, const char *argv[]);

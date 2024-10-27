@@ -11,6 +11,7 @@ Converter::Converter(std::string file_path)
     this->load_video_file();
     // this->dump_video_info();
     this->remux_to_mp4();
+    this->extract_thumbnail();
 }
 
 Converter::~Converter()
@@ -158,4 +159,79 @@ void Converter::remux_to_mp4()
     }
 
     av_write_trailer(this->ofmt_context);
+}
+
+void Converter::save_frame_as_jpeg(AVCodecContext *pCodecCtx, AVFrame *pFrame, unsigned int width)
+{
+    AVCodec *jpegCodec = avcodec_find_encoder(AV_CODEC_ID_MJPEG);
+    AVCodecContext *jpegContext = avcodec_alloc_context3(jpegCodec);
+    jpegContext->pix_fmt = pCodecCtx->pix_fmt;
+    jpegContext->height = pFrame->height;
+    jpegContext->width = pFrame->width;
+    jpegContext->time_base = (AVRational){1, 30};
+
+    jpegContext->strict_std_compliance = FF_COMPLIANCE_UNOFFICIAL;
+    avcodec_open2(jpegContext, jpegCodec, NULL);
+    FILE *JPEGFile;
+    char JPEGFName[] = "thumbnail.jpg";
+
+    AVPacket *packet = av_packet_alloc();
+    int gotFrame;
+
+    avcodec_encode_video2(jpegContext, packet, pFrame, &gotFrame);
+
+    JPEGFile = fopen(JPEGFName, "wb");
+    fwrite(packet->data, 1, packet->size, JPEGFile);
+    fclose(JPEGFile);
+
+    av_packet_unref(packet);
+    avcodec_close(jpegContext);
+}
+
+void Converter::extract_thumbnail()
+{
+    const char *filename = this->file_path.c_str();
+
+    AVFormatContext *pFormatContext = avformat_alloc_context();
+    avformat_open_input(&pFormatContext, filename, NULL, NULL);
+
+    // Find video stream
+    int video_stream_index = -1;
+    AVCodecParameters *pCodecParams = NULL;
+    AVCodec *pCodec = NULL;
+    for (int i = 0; i < pFormatContext->nb_streams; i++)
+    {
+        pCodecParams = pFormatContext->streams[i]->codecpar;
+        pCodec = avcodec_find_decoder(pCodecParams->codec_id);
+        if (pCodec->type == AVMEDIA_TYPE_VIDEO)
+        {
+            video_stream_index = i;
+            break;
+        }
+    }
+
+    avformat_find_stream_info(pFormatContext, NULL);
+
+    // Setup codec context for decoder
+    AVCodecContext *pCodecContext = avcodec_alloc_context3(pCodec);
+    avcodec_parameters_to_context(pCodecContext, pCodecParams);
+    avcodec_open2(pCodecContext, pCodec, NULL);
+
+    AVFrame *pFrame = av_frame_alloc();
+    AVPacket *pPkt = av_packet_alloc();
+
+    while (av_read_frame(pFormatContext, pPkt) >= 0)
+    {
+        if (pPkt->stream_index != video_stream_index)
+            continue;
+        avcodec_send_packet(pCodecContext, pPkt);
+        int ret = avcodec_receive_frame(pCodecContext, pFrame);
+        if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+            continue;
+        av_packet_unref(pPkt);
+        break; // Extract first video frame and break out
+    }
+
+    // Save frame
+    this->save_frame_as_jpeg(pCodecContext, pFrame, 250);
 }

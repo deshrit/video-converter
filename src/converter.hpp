@@ -5,7 +5,6 @@ extern "C"
 {
 #include <libavformat/avformat.h>
 #include <libavcodec/avcodec.h>
-#include <libavutil/avutil.h>
 }
 
 class Converter
@@ -27,4 +26,6 @@ public:
 
     void dump_video_info();
     void remux_to_mp4();
+    void save_frame_as_jpeg(AVCodecContext *pCodecCtx, AVFrame *pFrame, unsigned int width);
+    void extract_thumbnail();
 };
