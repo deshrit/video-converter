@@ -178,7 +178,8 @@ void Converter::save_frame_as_jpeg(AVCodecContext *pCodecCtx, AVFrame *pFrame, u
     AVPacket *packet = av_packet_alloc();
     int gotFrame;
 
-    avcodec_encode_video2(jpegContext, packet, pFrame, &gotFrame);
+    avcodec_send_frame(jpegContext, pFrame);
+    avcodec_receive_packet(jpegContext, packet);
 
     JPEGFile = fopen(JPEGFName, "wb");
     fwrite(packet->data, 1, packet->size, JPEGFile);

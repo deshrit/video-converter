@@ -15,9 +15,9 @@ sudo apt install build-essential cmake pkg-config libavformat-dev libavcodec-dev
 ```bash
 cmake -S . -B build
 make -C build
-./build/converter sample2.mkv
+./build/converter sample.mov
 ```
-This should generate the output file as `sample2_converted.mp4`.
+This should generate the output file as `sample_converted.mp4` with a image file `thumbnail.jpg`.
 
 ## Concept for video processing
 
