@@ -1,9 +1,9 @@
 // Implementations of utility functions
 
 #include "utils.hpp"
-#include <iostream>
+#include <filesystem>
 
-const char *get_file_name_from_argv(const int argc, const char *argv[])
+const char *get_file_path_from_argv(const int argc, const char *argv[])
 {
     if (argc < 2)
     {
@@ -11,6 +11,16 @@ const char *get_file_name_from_argv(const int argc, const char *argv[])
         exit(EXIT_FAILURE);
     }
     return argv[1];
+}
+
+std::tuple<std::string, std::string> get_filename_and_ext(std::string input_file_path)
+{
+    /*
+    Extracts filename and extension from filepath and returns as tuple.
+    */
+    std::filesystem::path p = input_file_path;
+    auto file = p.filename();
+    return {file.stem(), file.extension()};
 }
 
 int save_frame_as_jpeg(AVCodecContext *pCodecCtx, AVFrame *pFrame, int FrameNo)

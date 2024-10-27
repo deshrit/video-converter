@@ -1,6 +1,8 @@
 ## Video converter
 
-This application assumes you are in debain based operating system.
+This application assumes you are in debain based operating system. This application 
+can remux `mkv` and `mov` video container format to `mp4` container format with
+existing codecs.
 
 1. Requirements:
 ```bash
@@ -9,10 +11,13 @@ sudo apt install build-essential cmake pkg-config libavformat-dev libavcodec-dev
 ```
 2. Build the program in your preferred IDE with `cmake` configs.
 
-3. To test the build manually:
+3. To build and run program manually:
 ```bash
-./build/converter sample.mov
+cmake -S . -B build
+make -C build
+./build/converter sample2.mkv
 ```
+This should generate the output file as `sample2_converted.mp4`.
 
 ## Concept for video processing
 

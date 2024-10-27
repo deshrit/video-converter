@@ -3,12 +3,9 @@
     "configurePresets": [
         {
             "name": "default",
-            "generator": "Unix Makefiles",
-            "hidden": false,
-            "binaryDir": "${workspaceFolder}/build",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
+            "displayName": "GCC 11.4.0 x86_64-linux-gnu",
+            "description": "Using compilers: C = /usr/bin/gcc, CXX = /usr/bin/g++",
+            "binaryDir": "${sourceDir}/build"
         }
     ]
 }
